@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 export type TUseQuery = { isMatching: boolean };
 
 export function useQuery(query: string): TUseQuery {
-    const [isMatching, setIsMatching] = useState(false);
+    const [isMatching, setIsMatching] = useState(window.matchMedia(query).matches);
 
     useEffect(() => {
         const onChange = (e: MediaQueryListEvent) => setIsMatching(e.matches);

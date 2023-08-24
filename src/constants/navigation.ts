@@ -7,11 +7,11 @@ export const navigation: {
         label: "Home",
     },
     {
-        path: "/start-campaign",
-        label: "Start a campaign",
+        path: "/explore",
+        label: "Explore",
     },
     {
-        path: "/explore-campaign",
-        label: "Explore",
+        path: "/launch-ido",
+        label: "Launch IDO",
     },
 ];
