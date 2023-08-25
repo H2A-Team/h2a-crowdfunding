@@ -1,10 +1,9 @@
-import { Avatar, Card, Space, Tooltip, Typography } from "antd";
-import ProjectCardBanner, { IProjectCardBannerProps } from "./components/project-card-banner";
-import { useNavigate } from "react-router-dom";
-import { theme } from "antd";
+import { Card, Space, Tooltip, Typography, theme } from "antd";
+import moment from "moment";
+import { Link, useNavigate } from "react-router-dom";
 import EthSvg from "../../../../components/svg-components/eth-svg";
 import { formatNumberStrWithCommas } from "../../../../utils/common-utils";
-import moment from "moment";
+import ProjectCardBanner, { IProjectCardBannerProps } from "./components/project-card-banner";
 import "./index.scss";
 
 export interface IProjectCardData {
@@ -242,51 +241,52 @@ export default function ProjectCard(props: IProjectCardProps) {
     const dateBanner = prepareDateBanner(bannerVariant);
 
     return (
-        <Card
-            className="project-card"
-            hoverable
-            cover={
-                projectBanner &&
-                projectBanner !== "" && (
-                    <ProjectCardBanner
-                        src={projectBanner}
-                        cardIconSrc={projectIcon}
-                        cardIconEdgeSize={ICON_SIZE}
-                        dateBannerStyle={bannerStyle}
-                        date={dateBanner}
-                    />
-                )
-            }
-            onClick={onClick}
-        >
-            <Card.Meta
-                title={cardTitle()}
-                description={cardDescription()}
-                style={{ marginBottom: showStatus ? token.paddingLG + 6 : undefined, marginTop: ICON_SIZE / 2 - 6 }}
-            />
-
-            {showStatus && (
-                <div
-                    className="project-card__status-indicator-banner"
-                    style={{
-                        height: token.paddingLG + 6,
-                        maxHeight: token.paddingLG + 6,
-                        borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
-                        paddingInline: token.paddingLG,
-                        backgroundColor: bannerStyle.backgroundColor,
-                    }}
-                >
-                    <div className="status-indicator-banner__status-indicator">
-                        <Typography.Text
-                            strong
-                            ellipsis
-                            style={{ color: bannerStyle.color, textTransform: "uppercase" }}
-                        >
-                            {bannerVariant}
-                        </Typography.Text>
+        <Link to={"#"} className="project-card-wrapper">
+            <Card
+                className="project-card"
+                hoverable={true}
+                cover={
+                    projectBanner &&
+                    projectBanner !== "" && (
+                        <ProjectCardBanner
+                            src={projectBanner}
+                            cardIconSrc={projectIcon}
+                            cardIconEdgeSize={ICON_SIZE}
+                            dateBannerStyle={bannerStyle}
+                            date={dateBanner}
+                        />
+                    )
+                }
+                onClick={onClick}
+            >
+                <Card.Meta
+                    title={cardTitle()}
+                    description={cardDescription()}
+                    style={{ marginBottom: showStatus ? token.paddingLG + 6 : undefined, marginTop: ICON_SIZE / 2 - 6 }}
+                />
+                {showStatus && (
+                    <div
+                        className="project-card__status-indicator-banner"
+                        style={{
+                            height: token.paddingLG + 6,
+                            maxHeight: token.paddingLG + 6,
+                            borderRadius: `0 0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px`,
+                            paddingInline: token.paddingLG,
+                            backgroundColor: bannerStyle.backgroundColor,
+                        }}
+                    >
+                        <div className="status-indicator-banner__status-indicator">
+                            <Typography.Text
+                                strong
+                                ellipsis
+                                style={{ color: bannerStyle.color, textTransform: "uppercase" }}
+                            >
+                                {bannerVariant}
+                            </Typography.Text>
+                        </div>
                     </div>
-                </div>
-            )}
-        </Card>
+                )}
+            </Card>
+        </Link>
     );
 }

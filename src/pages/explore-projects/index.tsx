@@ -156,13 +156,14 @@ export default function ExploreProjects() {
     };
 
     const prepareListToDisplay = () => {
+        const searchQuery = searchStr.trim();
         const filteredList =
-            searchStr !== ""
+            searchQuery !== ""
                 ? projectsList.filter(
                       (project) =>
-                          project.projectName.toLowerCase().includes(searchStr.toLowerCase()) ||
-                          project.projectContractAddress.toLowerCase().includes(searchStr.toLowerCase()) ||
-                          project.tokenSymbol.toLowerCase().includes(searchStr.toLowerCase())
+                          project.projectName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          project.projectContractAddress.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          project.tokenSymbol.toLowerCase().includes(searchQuery.toLowerCase())
                   )
                 : projectsList;
 
@@ -181,11 +182,11 @@ export default function ExploreProjects() {
 
     return (
         <>
-            <Row gutter={[8, 24]}>
+            <Row gutter={[8, 24]} align={"middle"}>
                 <Col xxl={9} xl={9} lg={9} md={24} xs={24}>
-                    <Space>
+                    <Space align="center" direction="vertical">
                         <Typography>
-                            <Typography.Title level={2} style={{ fontWeight: "bolder" }}>
+                            <Typography.Title level={2} style={{ fontWeight: "bolder", margin: 0 }}>
                                 Funded Projects
                             </Typography.Title>
                             <Typography.Title type="secondary" level={4} style={{ margin: 0 }}>
