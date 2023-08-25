@@ -12,6 +12,10 @@
         position: absolute;
         bottom: 0;
         left: 0;
+
+        > img {
+            border-radius: 6px!important;
+        }
     }
 
     & > .project-card__project-date {
@@ -19,7 +23,7 @@
         bottom: 0;
         right: 0;
 
-        transform: translateY(calc(100% + 3px));
+        transform: translateY(calc(100% + 2px));
 
         display: flex;
         align-items: center;
