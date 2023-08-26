@@ -5,6 +5,8 @@ import EthSvg from "../../../../components/svg-components/eth-svg";
 import { formatNumberStrWithCommas } from "../../../../utils/common-utils";
 import ProjectCardBanner, { IProjectCardBannerProps } from "./components/project-card-banner";
 import "./index.scss";
+import { inferStatusBannerVariant, prepareVariantStyle } from "../../../../utils/project-card";
+import { STATUS_BANNER_VARIANT } from "../../../../constants/project-card";
 
 export interface IProjectCardData {
     projectContractAddress: string;
@@ -20,6 +22,7 @@ export interface IProjectCardData {
     endDate: Date;
     idoOpenDate: Date;
     idoCloseDate: Date;
+    slug: string;
 }
 
 interface IProjectCardProps {
@@ -29,15 +32,6 @@ interface IProjectCardProps {
 }
 
 const ICON_SIZE = 88;
-
-const enum STATUS_BANNER_VARIANT {
-    UPCOMING = "Upcoming",
-    FUNDING = "Funding",
-    FUNDING_CLOSED = "Funding Closed",
-    TOKEN_CLAIMING = "Token Claiming",
-    CLOSED = "Closed",
-    UNKNOWN = "Unknown",
-}
 
 export default function ProjectCard(props: IProjectCardProps) {
     const { data, detailPath, showStatus } = props;
@@ -121,78 +115,6 @@ export default function ProjectCard(props: IProjectCardProps) {
         );
     };
 
-    const inferStatusBannerVariant = (): STATUS_BANNER_VARIANT => {
-        const currentTime = moment(new Date());
-
-        // project has closed
-        if (moment(endDate).diff(currentTime) < 0 && moment(idoCloseDate).diff(currentTime) < 0)
-            return STATUS_BANNER_VARIANT.CLOSED;
-
-        // project has ended the funding phrase
-        if (moment(endDate).diff(currentTime) < 0 && moment(idoOpenDate).diff(currentTime) > 0)
-            return STATUS_BANNER_VARIANT.FUNDING_CLOSED;
-
-        // project which has not started is considered as upcoming project
-        if (moment(startDate).diff(currentTime) > 0) return STATUS_BANNER_VARIANT.UPCOMING;
-
-        // project is in the IDO state (claiming token)
-        if (moment(idoOpenDate).diff(currentTime) < 0 && moment(idoCloseDate).diff(currentTime) > 0)
-            return STATUS_BANNER_VARIANT.TOKEN_CLAIMING;
-
-        // project is funding
-        if (moment(startDate).diff(currentTime) < 0 && moment(endDate).diff(currentTime) > 0)
-            return STATUS_BANNER_VARIANT.FUNDING;
-
-        // default case
-        return STATUS_BANNER_VARIANT.UNKNOWN;
-    };
-
-    const prepareVariantStyle = (variant: STATUS_BANNER_VARIANT): { backgroundColor: string; color: string } => {
-        switch (variant) {
-            case STATUS_BANNER_VARIANT.UPCOMING: {
-                return {
-                    backgroundColor: "#CCE2FF",
-                    color: token.colorInfo,
-                };
-            }
-
-            case STATUS_BANNER_VARIANT.FUNDING: {
-                return {
-                    backgroundColor: "#CBFF92",
-                    color: token.colorSuccess,
-                };
-            }
-
-            case STATUS_BANNER_VARIANT.TOKEN_CLAIMING: {
-                return {
-                    backgroundColor: "#FFD6B4",
-                    color: token.colorPrimary,
-                };
-            }
-
-            case STATUS_BANNER_VARIANT.CLOSED: {
-                return {
-                    backgroundColor: token.colorTextSecondary,
-                    color: token.colorWhite,
-                };
-            }
-
-            case STATUS_BANNER_VARIANT.FUNDING_CLOSED: {
-                return {
-                    backgroundColor: "#FFC2B5",
-                    color: token.colorError,
-                };
-            }
-
-            default: {
-                return {
-                    backgroundColor: token.colorTextSecondary,
-                    color: token.colorWhite,
-                };
-            }
-        }
-    };
-
     const prepareDateBanner = (variant: STATUS_BANNER_VARIANT): IProjectCardBannerProps["date"] => {
         switch (variant) {
             case STATUS_BANNER_VARIANT.UPCOMING: {
@@ -236,12 +158,12 @@ export default function ProjectCard(props: IProjectCardProps) {
         }
     };
 
-    const bannerVariant = inferStatusBannerVariant();
-    const bannerStyle = prepareVariantStyle(bannerVariant);
+    const bannerVariant = inferStatusBannerVariant({ startDate, endDate, idoOpenDate, idoCloseDate });
+    const bannerStyle = prepareVariantStyle(bannerVariant, token);
     const dateBanner = prepareDateBanner(bannerVariant);
 
     return (
-        <Link to={"#"} className="project-card-wrapper">
+        <Link to={`./${data.slug}`} className="project-card-wrapper">
             <Card
                 className="project-card"
                 hoverable={true}

@@ -1,10 +1,11 @@
+import { StyleProvider } from "@ant-design/cssinjs";
+import { ConfigProvider } from "antd";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { ConfigProvider } from "antd";
-import { StyleProvider } from "@ant-design/cssinjs";
-import { routes } from "./constants/routes";
 import "./assets/index.scss";
+import ScrollTopButton from "./components/buttons/scroll-top";
+import { routes } from "./constants/routes";
 import { customizedTheme } from "./constants/theme";
 import { BlockUIProvider } from "./contexts/block-ui";
 import { SmartContractProvider } from "./contexts/smart-contract";
@@ -18,6 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                 <BlockUIProvider>
                     <SmartContractProvider>
                         <RouterProvider router={router} />
+                        <ScrollTopButton />
                     </SmartContractProvider>
                 </BlockUIProvider>
             </ConfigProvider>
