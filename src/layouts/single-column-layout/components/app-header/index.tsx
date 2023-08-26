@@ -26,7 +26,7 @@ export default function AppHeader() {
     }));
 
     return (
-        <header className="single-column-layout__app-header">
+        <header className="single-column-layout__app-header" id="#header">
             {isSmallScreen ? (
                 <Dropdown menu={{ items: dropdownItems }} trigger={["click"]}>
                     <nav onClick={(e) => e.preventDefault()} style={{ height: "100%" }}>

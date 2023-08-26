@@ -39,51 +39,29 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
 
     const [form] = Form.useForm();
 
-    const [urlValidateStatus, setUrlValidateStatus] = React.useState({ logo: "", cover: "" });
+    const handleFormFinish = (value: any) => {
+        const sanitizedValue: IProjectFormData = {
+            name: value.name,
+            slug: value.slug,
+            shortDescription: value.shortDescription,
+            description: value.description,
+            logoUrl: value.logoUrl,
+            coverBackgroundUrl: value.coverBackgroundUrl,
+            maxAllocation: value.maxAllocation,
+            totalRaise: value.totalRaise,
+            tokenSymbol: value.tokenSymbol,
+            tokenSwapRaito: value.tokenSwapRaito,
+            fundingPeriod: {
+                startsAt: value.fundingPeriod[0].toDate(),
+                endsAt: value.fundingPeriod[1].toDate(),
+            },
+            tokenClaimingPeriod: {
+                startsAt: value.tokenClaimingPeriod[0].toDate(),
+                endsAt: value.tokenClaimingPeriod[1].toDate(),
+            },
+        };
 
-    const handleFormFinish = async (value: any) => {
-        try {
-            const { logoUrl, coverBackgroundUrl } = value;
-
-            const [logoResult, coverResult] = await Promise.allSettled([
-                isImageUrlValid(logoUrl),
-                isImageUrlValid(coverBackgroundUrl),
-            ]);
-
-            const isLogoOk = logoResult.status === "fulfilled" && logoResult.value;
-            const isCoverOk = coverResult.status === "fulfilled" && coverResult.value;
-
-            setUrlValidateStatus({ logo: isLogoOk ? "" : "error", cover: isCoverOk ? "" : "error" });
-
-            if (!isLogoOk || !isCoverOk) {
-                return;
-            }
-
-            const sanitizedValue: IProjectFormData = {
-                name: value.name,
-                slug: value.slug,
-                shortDescription: value.shortDescription,
-                description: value.description,
-                logoUrl: value.logoUrl,
-                coverBackgroundUrl: value.coverBackgroundUrl,
-                maxAllocation: value.maxAllocation,
-                totalRaise: value.totalRaise,
-                tokenSymbol: value.tokenSymbol,
-                tokenSwapRaito: value.tokenSwapRaito,
-                fundingPeriod: {
-                    startsAt: value.fundingPeriod[0].toDate(),
-                    endsAt: value.fundingPeriod[1].toDate(),
-                },
-                tokenClaimingPeriod: {
-                    startsAt: value.tokenClaimingPeriod[0].toDate(),
-                    endsAt: value.tokenClaimingPeriod[1].toDate(),
-                },
-            };
-
-            onSubmit && onSubmit(sanitizedValue);
-        } catch (error) {
-            console.log(error);
-        }
+        onSubmit && onSubmit(sanitizedValue);
     };
 
     const handleOnBlurProjectTitle = (event: React.FocusEvent<HTMLInputElement, Element>) => {
@@ -166,10 +144,23 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
                         <Form.Item
                             name="logoUrl"
                             label="Logo URL"
-                            rules={[{ required: true, whitespace: true, type: "url" }]}
                             tooltip={"An image that represented for your project"}
-                            validateStatus={urlValidateStatus.logo as any}
-                            help={urlValidateStatus.logo === "error" && "URL is not valid"}
+                            rules={[
+                                () => ({
+                                    async validator(_, value) {
+                                        if (!value || !value.trim()) {
+                                            return Promise.reject(new Error("Please enter Logo URL"));
+                                        }
+
+                                        const isValid = await isImageUrlValid(value);
+                                        if (!isValid) {
+                                            return Promise.reject(new Error("Logo is not an url"));
+                                        }
+
+                                        return Promise.resolve();
+                                    },
+                                }),
+                            ]}
                         >
                             <Input placeholder="Put your logo url" size="large" />
                         </Form.Item>
@@ -179,12 +170,25 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
                         <Form.Item
                             name="coverBackgroundUrl"
                             label="Cover Image URL"
-                            rules={[{ required: true, whitespace: true, type: "url" }]}
                             tooltip={
                                 "This image will be displayed as card background and cover background in the detail page"
                             }
-                            validateStatus={urlValidateStatus.cover as any}
-                            help={urlValidateStatus.cover === "error" && "URL is not valid"}
+                            rules={[
+                                () => ({
+                                    async validator(_, value) {
+                                        if (!value || !value.trim()) {
+                                            return Promise.reject(new Error("Please enter Cover Image URL"));
+                                        }
+
+                                        const isValid = await isImageUrlValid(value);
+                                        if (!isValid) {
+                                            return Promise.reject(new Error("Cover Image is not an url"));
+                                        }
+
+                                        return Promise.resolve();
+                                    },
+                                }),
+                            ]}
                         >
                             <Input placeholder="Put your cover image url" size="large" />
                         </Form.Item>

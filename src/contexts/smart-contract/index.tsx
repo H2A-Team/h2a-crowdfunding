@@ -1,10 +1,10 @@
-import { createContext, useContext } from "react";
+import { ReactNode, createContext, useContext } from "react";
 
 interface ISmartContract {}
 
 const SmartContract = createContext<ISmartContract>({});
 
-export const SmartContractProvider = ({ children }: { children: JSX.Element }) => {
+export const SmartContractProvider = ({ children }: { children: ReactNode }) => {
     return <SmartContract.Provider value={{}}>{children}</SmartContract.Provider>;
 };
 

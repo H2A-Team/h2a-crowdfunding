@@ -5,6 +5,7 @@ import Forbidden from "../components/error-pages/forbidden";
 import SingleColumnLayout from "../layouts/single-column-layout";
 import ExploreProjects from "../pages/explore-projects";
 import LaunchProject from "../pages/launch-project";
+import ProjectDetailPage from "../pages/project-detail";
 
 export const routes: RouteObject[] = [
     {
@@ -19,6 +20,7 @@ export const routes: RouteObject[] = [
                 path: "/explore",
                 element: <ExploreProjects />,
             },
+            { path: "/explore/:projectSlug", element: <ProjectDetailPage /> },
             {
                 path: "/launch-ido",
                 element: <LaunchProject />,

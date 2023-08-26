@@ -1,14 +1,14 @@
+import { LoadingOutlined } from "@ant-design/icons";
 import { Col, Input, Pagination, PaginationProps, Row, Space, Typography, theme } from "antd";
+import moment from "moment";
+import { ElementRef, useRef, useState } from "react";
+import { addCharacterBeforeString, formatNumberStrWithCommas } from "../../utils/common-utils";
+import ProjectCard, { IProjectCardData } from "./components/project-card";
+import StatisticCard from "./components/statistic-card";
 import FundedProjectsIcon from "./components/statistic-card-icon/funded-projects";
 import IconWrapper from "./components/statistic-card-icon/icon-wrapper";
-import UniqueParticipants from "./components/statistic-card-icon/unique-participants";
 import RaisedCapital from "./components/statistic-card-icon/raised-capital";
-import { addCharacterBeforeString, formatNumberStrWithCommas } from "../../utils/common-utils";
-import StatisticCard from "./components/statistic-card";
-import { ElementRef, useRef, useState } from "react";
-import ProjectCard, { IProjectCardData } from "./components/project-card";
-import moment from "moment";
-import { LoadingOutlined } from "@ant-design/icons";
+import UniqueParticipants from "./components/statistic-card-icon/unique-participants";
 import "./index.scss";
 
 const fakeCardData: IProjectCardData[] = [
@@ -26,6 +26,7 @@ const fakeCardData: IProjectCardData[] = [
         endDate: new Date(2023, 11, 31, 23, 59),
         idoOpenDate: new Date(2023, 11, 31, 23, 59),
         idoCloseDate: new Date(2024, 0, 31, 23, 59),
+        slug: "hcmus",
     },
     {
         projectContractAddress: "2",
@@ -42,6 +43,7 @@ const fakeCardData: IProjectCardData[] = [
         endDate: new Date(2023, 7, 24, 23, 59),
         idoOpenDate: new Date(2023, 7, 24, 23, 59),
         idoCloseDate: new Date(2023, 8, 24, 23, 59),
+        slug: "ussh",
     },
     {
         projectContractAddress: "3",
@@ -58,6 +60,7 @@ const fakeCardData: IProjectCardData[] = [
         endDate: new Date(2023, 7, 15, 23, 59),
         idoOpenDate: new Date(2023, 7, 15, 23, 59),
         idoCloseDate: new Date(2023, 7, 20, 23, 59),
+        slug: "hcmut",
     },
     {
         projectContractAddress: "4",
@@ -73,6 +76,7 @@ const fakeCardData: IProjectCardData[] = [
         endDate: new Date(2023, 7, 23, 23, 59),
         idoOpenDate: new Date(2023, 8, 23, 23, 59),
         idoCloseDate: new Date(2023, 9, 23, 23, 59),
+        slug: "uit",
     },
     {
         projectContractAddress: "5",
@@ -90,6 +94,7 @@ const fakeCardData: IProjectCardData[] = [
         endDate: new Date(2023, 9, 23, 23, 59),
         idoOpenDate: new Date(2023, 9, 23, 23, 59),
         idoCloseDate: new Date(2023, 10, 23, 23, 59),
+        slug: "ueh",
     },
 ];
 
