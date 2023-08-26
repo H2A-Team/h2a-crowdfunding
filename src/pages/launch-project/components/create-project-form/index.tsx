@@ -1,4 +1,4 @@
-import { Button, Col, DatePicker, Form, Input, InputNumber, Row, Space } from "antd";
+import { Alert, Button, Col, DatePicker, Form, Input, InputNumber, Row, Space } from "antd";
 import moment from "moment";
 import * as React from "react";
 import { DATETIME_FORMAT } from "../../../../constants/datetime";
@@ -378,6 +378,22 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
                         </Form.Item>
                     </Col>
                 </Row>
+
+                <Alert
+                    message="Before you submit"
+                    description={
+                        <>
+                            <p> - After submiting, you cannot edit or delete your project on this site.</p>
+                            <p>
+                                - When the funding period ends, if your project are not staked at{" "}
+                                <strong>totaly 100%</strong>, all money will be sent back to investors!
+                            </p>
+                        </>
+                    }
+                    type="warning"
+                    showIcon
+                    style={{ marginBottom: "24px" }}
+                />
 
                 <Space
                     align="center"

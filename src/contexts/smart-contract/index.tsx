@@ -1,11 +1,20 @@
+import { useAddress, useContract } from "@thirdweb-dev/react";
 import { ReactNode, createContext, useContext } from "react";
+import { APP_CONFIGS } from "../../configs";
 
-interface ISmartContract {}
+interface ISmartContract {
+    address: string | undefined;
+    contract: any;
+}
 
-const SmartContract = createContext<ISmartContract>({});
+const SmartContract = createContext<ISmartContract>({ address: "", contract: null });
 
 export const SmartContractProvider = ({ children }: { children: ReactNode }) => {
-    return <SmartContract.Provider value={{}}>{children}</SmartContract.Provider>;
+    const { contract }: { contract: any } = useContract(APP_CONFIGS.contractAddress);
+
+    const address = useAddress();
+
+    return <SmartContract.Provider value={{ address, contract }}>{children}</SmartContract.Provider>;
 };
 
 export const useSmartContract = () => {

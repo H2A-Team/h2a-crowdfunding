@@ -1,9 +1,10 @@
-import { Button, Dropdown, Space, Divider, MenuProps, theme } from "antd";
+import { DownOutlined } from "@ant-design/icons";
+import { ConnectWallet } from "@thirdweb-dev/react";
+import { Button, Divider, Dropdown, MenuProps, Space, theme } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import AppLogo from "../../../../components/app-logo";
 import { navigation } from "../../../../constants/navigation";
 import { useQuery } from "../../../../hooks/use-query";
-import { DownOutlined, WalletOutlined } from "@ant-design/icons";
 import "./index.scss";
 
 export default function AppHeader() {
@@ -14,10 +15,6 @@ export default function AppHeader() {
     // handling functions
     const handleNavigate = (to: string) => {
         navigate(to);
-    };
-
-    const handleConnectWallet = () => {
-        console.log("Clicked connect wallet button");
     };
 
     const dropdownItems: MenuProps["items"] = navigation.map((nav, index) => ({
@@ -70,17 +67,7 @@ export default function AppHeader() {
                         </nav>
                     )}
 
-                    <Button
-                        type="primary"
-                        size="large"
-                        icon={<WalletOutlined />}
-                        style={{
-                            textTransform: "uppercase",
-                        }}
-                        onClick={handleConnectWallet}
-                    >
-                        Connect
-                    </Button>
+                    <ConnectWallet theme="light" btnTitle="Connect Wallet" className="custom-connect-wallet" />
                 </Space>
             </div>
         </header>
