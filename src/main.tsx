@@ -1,14 +1,17 @@
 import { StyleProvider } from "@ant-design/cssinjs";
+import { ThirdwebProvider } from "@thirdweb-dev/react";
 import { ConfigProvider } from "antd";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./assets/index.scss";
 import ScrollTopButton from "./components/buttons/scroll-top";
+import { APP_CHAINS, APP_CONFIGS } from "./configs";
 import { routes } from "./constants/routes";
 import { customizedTheme } from "./constants/theme";
 import { BlockUIProvider } from "./contexts/block-ui";
 import { SmartContractProvider } from "./contexts/smart-contract";
+import { AntMessageProvider } from "./contexts/ant-mesage";
 
 const router = createBrowserRouter(routes);
 
@@ -17,10 +20,22 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <StyleProvider hashPriority="high">
             <ConfigProvider theme={customizedTheme}>
                 <BlockUIProvider>
-                    <SmartContractProvider>
-                        <RouterProvider router={router} />
-                        <ScrollTopButton />
-                    </SmartContractProvider>
+                    <AntMessageProvider>
+                        <ThirdwebProvider
+                            clientId={APP_CONFIGS.thirdwebClientId}
+                            activeChain={APP_CHAINS[APP_CONFIGS.activeChain]}
+                            dAppMeta={{
+                                name: APP_CONFIGS.appName,
+                                url: "https://example.com",
+                                isDarkMode: false,
+                            }}
+                        >
+                            <SmartContractProvider>
+                                <RouterProvider router={router} />
+                                <ScrollTopButton />
+                            </SmartContractProvider>
+                        </ThirdwebProvider>
+                    </AntMessageProvider>
                 </BlockUIProvider>
             </ConfigProvider>
         </StyleProvider>

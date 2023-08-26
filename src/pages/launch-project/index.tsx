@@ -1,18 +1,61 @@
 import { Card, Col, Row, Space, Typography } from "antd";
+import { useNavigate } from "react-router-dom";
+import ConnectWalletGuide from "../../components/connect-wallet-guide";
+import { useAntMessage } from "../../contexts/ant-mesage";
+import { useBlockUI } from "../../contexts/block-ui";
+import { useSmartContract } from "../../contexts/smart-contract";
+import { CreateProjectDTO } from "../../core/dto";
 import CreateProjectForm, { IProjectFormData } from "./components/create-project-form";
 import "./styles.scss";
-import { useNavigate } from "react-router-dom";
 
 export default function LaunchProject() {
     const navigate = useNavigate();
+    const { address, contract } = useSmartContract();
+
+    const { blockUI, unblockUI } = useBlockUI();
+    const antMessage = useAntMessage();
 
     const handleFormCancel = () => {
         navigate("/explore");
     };
 
-    const handleFormSubmit = (formData: IProjectFormData) => {
-        console.log({ formData });
+    const handleFormSubmit = async (formData: IProjectFormData) => {
+        const payload: CreateProjectDTO = {
+            name: formData.name,
+            slug: formData.slug,
+            shortDescription: formData.shortDescription,
+            description: formData.description,
+            logoUrl: formData.logoUrl,
+            coverBackgroundUrl: formData.coverBackgroundUrl,
+            maxAllocation: formData.maxAllocation,
+            totalRaise: formData.totalRaise,
+            tokenSymbol: formData.tokenSymbol,
+            tokenSwapRaito: formData.tokenSwapRaito,
+            opensAt: formData.fundingPeriod.startsAt.getTime() * 1000,
+            endsAt: formData.fundingPeriod.endsAt.getTime() * 1000,
+            idoStartsAt: formData.tokenClaimingPeriod.startsAt.getTime() * 1000,
+            idoEndsAt: formData.tokenClaimingPeriod.endsAt.getTime() * 1000,
+        };
+
+        try {
+            blockUI();
+            await contract.call("createProject", [payload]);
+            unblockUI();
+
+            // console.log(result);
+            // const { blockHash, transactionHash } = result.receipt;
+
+            navigate("/explore");
+        } catch (error) {
+            unblockUI();
+            console.log(error);
+            antMessage.error("Transaction failed, please try again later!");
+        }
     };
+
+    if (!address) {
+        return <ConnectWalletGuide />;
+    }
 
     return (
         <Row align="middle" justify="center">
