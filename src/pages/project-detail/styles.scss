@@ -1,18 +1,27 @@
 .project-detail-container {
     .project-detail-top {
-        .projet-detail-top-general {
-            .ant-space-item {
-                h1 {
-                    margin: 0 !important;
-                    font-size: 36px;
-                }
+        width: 100%;
 
-                span {
-                    font-size: 19px;
-                    line-height: 165%;
-                    white-space: normal;
-                    color: #6c809d;
-                    font-weight: 500;
+        .ant-space-item:last-child {
+            flex-grow: 1;
+            width: 100%;
+
+            .projet-detail-top-general {
+                width: 100%;
+
+                .ant-space-item {
+                    h1 {
+                        margin: 0 !important;
+                        font-size: 36px;
+                    }
+
+                    span {
+                        font-size: 19px;
+                        line-height: 165%;
+                        white-space: normal;
+                        color: #6c809d;
+                        font-weight: 500;
+                    }
                 }
             }
         }
@@ -40,12 +49,13 @@
 
         .project-detail-content-info {
             width: 100%;
+            margin-bottom: 0.5rem;
 
             .project-detail-content-info-title {
                 width: 100%;
 
                 span {
-                    font-size: 1.25rem;
+                    font-size: 1rem;
                     color: #838fa2;
                 }
 

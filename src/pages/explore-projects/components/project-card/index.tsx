@@ -9,20 +9,20 @@ import { inferStatusBannerVariant, prepareVariantStyle } from "../../../../utils
 import { STATUS_BANNER_VARIANT } from "../../../../constants/project-card";
 
 export interface IProjectCardData {
-    projectContractAddress: string;
-    projectIcon: string;
+    id: number;
+    slug: string;
+    name: string;
+    shortDescription: string;
+    logoUrl: string;
     projectBanner: string;
-    projectName: string;
-    projectSlogan: string;
-    tokenSymbol: string;
     goal: number;
+    tokenSymbol: string;
     maxAllocation: number;
     createdDate: Date;
     startDate: Date;
     endDate: Date;
     idoOpenDate: Date;
     idoCloseDate: Date;
-    slug: string;
 }
 
 interface IProjectCardProps {
@@ -36,10 +36,10 @@ const ICON_SIZE = 88;
 export default function ProjectCard(props: IProjectCardProps) {
     const { data, detailPath, showStatus } = props;
     const {
-        projectIcon,
+        logoUrl: projectIcon,
         projectBanner,
-        projectName,
-        projectSlogan,
+        name,
+        shortDescription,
         tokenSymbol,
         goal,
         maxAllocation,
@@ -61,7 +61,7 @@ export default function ProjectCard(props: IProjectCardProps) {
             <div style={{ width: "100%", display: "flex" }}>
                 <div style={{ width: "calc(100% - 32px)", display: "flex", flexDirection: "column" }}>
                     <Typography.Title level={4} style={{ margin: 0, width: "100%" }} ellipsis>
-                        {projectName}
+                        {name}
                     </Typography.Title>
                     <Typography.Text style={{ color: token.colorPrimary, width: "100%" }} ellipsis>
                         {tokenSymbol}
@@ -79,9 +79,9 @@ export default function ProjectCard(props: IProjectCardProps) {
     const cardDescription = () => {
         return (
             <Space direction="vertical" size={8} style={{ width: "100%" }}>
-                <Tooltip title={projectSlogan}>
+                <Tooltip title={shortDescription}>
                     <Typography.Text type="secondary" ellipsis>
-                        {projectSlogan}
+                        {shortDescription}
                     </Typography.Text>
                 </Tooltip>
 
@@ -96,7 +96,7 @@ export default function ProjectCard(props: IProjectCardProps) {
                             transform: "translateY(-6px)",
                         }}
                     ></div>
-                    <Typography.Text strong>{formatNumberStrWithCommas(goal.toString())}</Typography.Text>
+                    <Typography.Text strong>{formatNumberStrWithCommas(goal.toString())} ETH</Typography.Text>
                 </div>
                 <div style={{ display: "flex", gap: "4px" }}>
                     <Typography.Text type="secondary" ellipsis>
@@ -109,7 +109,7 @@ export default function ProjectCard(props: IProjectCardProps) {
                             transform: "translateY(-6px)",
                         }}
                     ></div>
-                    <Typography.Text strong>{formatNumberStrWithCommas(maxAllocation.toString())}</Typography.Text>
+                    <Typography.Text strong>{formatNumberStrWithCommas(maxAllocation.toString())} ETH</Typography.Text>
                 </div>
             </Space>
         );

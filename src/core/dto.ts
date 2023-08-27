@@ -8,7 +8,7 @@ export interface CreateProjectDTO {
     maxAllocation: number;
     totalRaise: number;
     tokenSymbol: string;
-    tokenSwapRaito: number;
+    tokenSwapRaito: string;
     opensAt: number;
     endsAt: number;
     idoStartsAt: number;

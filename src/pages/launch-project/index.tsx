@@ -30,15 +30,15 @@ export default function LaunchProject() {
             maxAllocation: formData.maxAllocation,
             totalRaise: formData.totalRaise,
             tokenSymbol: formData.tokenSymbol,
-            tokenSwapRaito: formData.tokenSwapRaito,
-            opensAt: formData.fundingPeriod.startsAt.getTime() * 1000,
-            endsAt: formData.fundingPeriod.endsAt.getTime() * 1000,
-            idoStartsAt: formData.tokenClaimingPeriod.startsAt.getTime() * 1000,
-            idoEndsAt: formData.tokenClaimingPeriod.endsAt.getTime() * 1000,
+            tokenSwapRaito: formData.tokenSwapRaito.toString(),
+            opensAt: formData.fundingPeriod.startsAt.getTime(),
+            endsAt: formData.fundingPeriod.endsAt.getTime(),
+            idoStartsAt: formData.tokenClaimingPeriod.startsAt.getTime(),
+            idoEndsAt: formData.tokenClaimingPeriod.endsAt.getTime(),
         };
 
         try {
-            blockUI();
+            blockUI("Transaction is in progess, please wait ...");
             await contract.call("createProject", [payload]);
             unblockUI();
 
