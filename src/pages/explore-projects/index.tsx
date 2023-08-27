@@ -1,5 +1,6 @@
 import { LoadingOutlined } from "@ant-design/icons";
 import { Col, Input, Pagination, PaginationProps, Row, Space, Typography, theme } from "antd";
+import { BigNumber } from "ethers";
 import moment from "moment";
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useSmartContract } from "../../contexts/smart-contract";
@@ -22,9 +23,9 @@ export default function ExploreProjects() {
     }>({ current: 1, pageSize: 10, total: 50 });
 
     const [statistics, setStatistics] = useState<IStatisticData>({
-        totalProjects: 0,
-        totalRaised: 0,
-        uniqueParticipants: 0,
+        totalProjects: BigNumber.from(0),
+        totalRaised: BigNumber.from(0),
+        uniqueParticipants: BigNumber.from(0),
     });
     const [isStatisticLoading, setIsStatisticLoading] = useState(true);
 
@@ -108,9 +109,9 @@ export default function ExploreProjects() {
             const { totalProjects, totalRaised, uniqueParticipants } = result;
 
             setStatistics({
-                totalProjects: totalProjects.toNumber() as number,
-                totalRaised: totalRaised.toNumber() as number,
-                uniqueParticipants: uniqueParticipants.toNumber() as number,
+                totalProjects: totalProjects,
+                totalRaised: totalRaised,
+                uniqueParticipants: uniqueParticipants,
             });
         } catch (error) {
             console.log(error);

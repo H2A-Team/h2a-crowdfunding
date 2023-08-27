@@ -48,7 +48,7 @@ export default function LaunchProject() {
             navigate("/explore");
         } catch (error) {
             unblockUI();
-            console.log(error);
+            // console.log(error);
             antMessage.error("Transaction failed, please try again later!");
         }
     };

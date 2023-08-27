@@ -3,7 +3,7 @@ import "./index.scss";
 
 interface IStatisticCardProps {
     label: string;
-    value: number;
+    value: string;
     iconComponent: JSX.Element;
     textColor?: string;
     formatters?: ((str: string) => string)[];
@@ -14,9 +14,14 @@ export default function StatisticCard(props: IStatisticCardProps) {
     const { label, value, iconComponent, textColor, formatters, loading } = props;
 
     const valueToDisplay = () => {
-        if (value < 0) return "N/A";
-        let strToReturn = value.toString();
-        if (!formatters) return strToReturn;
+        if (value === "0") {
+            return "N/A";
+        }
+
+        let strToReturn = value;
+        if (!formatters) {
+            return strToReturn;
+        }
 
         formatters.forEach((formatter) => (strToReturn = formatter(strToReturn)));
 
