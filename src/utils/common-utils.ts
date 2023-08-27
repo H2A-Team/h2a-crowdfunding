@@ -1,7 +1,7 @@
 import { VIETNAMESE_REGEX } from "../constants/string";
 
-export function formatNumberStrWithCommas(number: string): string {
-    return number.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
+export function formatNumberStrWithCommas(number: string | number): string {
+    return number.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
 
 export function addCharacterBeforeString(string: string, character: string): string {

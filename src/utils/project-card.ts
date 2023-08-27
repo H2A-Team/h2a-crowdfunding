@@ -3,10 +3,10 @@ import { STATUS_BANNER_VARIANT } from "../constants/project-card";
 import moment from "moment";
 
 export function inferStatusBannerVariant(schedule: {
-    startDate: string | Date;
-    endDate: string | Date;
-    idoOpenDate: string | Date;
-    idoCloseDate: string | Date;
+    startDate: Date;
+    endDate: Date;
+    idoOpenDate: Date;
+    idoCloseDate: Date;
 }): STATUS_BANNER_VARIANT {
     const currentTime = moment(new Date());
 
