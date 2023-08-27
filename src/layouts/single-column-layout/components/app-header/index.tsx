@@ -1,7 +1,7 @@
 import { DownOutlined } from "@ant-design/icons";
 import { ConnectWallet } from "@thirdweb-dev/react";
 import { Button, Divider, Dropdown, MenuProps, Space, theme } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import AppLogo from "../../../../components/app-logo";
 import { navigation } from "../../../../constants/navigation";
 import { useQuery } from "../../../../hooks/use-query";
@@ -10,12 +10,6 @@ import "./index.scss";
 export default function AppHeader() {
     const { token } = theme.useToken();
     const { isMatching: isSmallScreen } = useQuery("(max-width: 730px)");
-    const navigate = useNavigate();
-
-    // handling functions
-    const handleNavigate = (to: string) => {
-        navigate(to);
-    };
 
     const dropdownItems: MenuProps["items"] = navigation.map((nav, index) => ({
         key: index,
@@ -48,19 +42,19 @@ export default function AppHeader() {
                             <Space style={{ height: "100%" }}>
                                 {navigation.map((nav, index) =>
                                     nav.path === "/" ? null : (
-                                        <Button
-                                            key={index}
-                                            type="text"
-                                            size="large"
-                                            style={{
-                                                color: token.colorPrimary,
-                                                textTransform: "uppercase",
-                                                fontWeight: "600",
-                                            }}
-                                            onClick={() => handleNavigate(nav.path)}
-                                        >
-                                            {nav.label}
-                                        </Button>
+                                        <NavLink key={index} to={nav.path} className="nav-btn" end>
+                                            <Button
+                                                type="text"
+                                                size="large"
+                                                style={{
+                                                    color: token.colorPrimary,
+                                                    textTransform: "uppercase",
+                                                    fontWeight: "600",
+                                                }}
+                                            >
+                                                {nav.label}
+                                            </Button>
+                                        </NavLink>
                                     )
                                 )}
                             </Space>

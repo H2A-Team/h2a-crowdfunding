@@ -3,8 +3,8 @@ import {
     Breadcrumb,
     Button,
     Card,
-    Carousel,
     Col,
+    Modal,
     Progress,
     Row,
     Skeleton,
@@ -14,9 +14,14 @@ import {
     Typography,
     theme,
 } from "antd";
+import { BigNumber, utils } from "ethers";
+import moment from "moment";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import EthSvg from "../../components/svg-components/eth-svg";
+import { STATUS_BANNER_VARIANT } from "../../constants/project-card";
+import { useAntMessage } from "../../contexts/ant-mesage";
+import { useBlockUI } from "../../contexts/block-ui";
 import { useSmartContract } from "../../contexts/smart-contract";
 import { formatNumberStrWithCommas } from "../../utils/common-utils";
 import { inferStatusBannerVariant, prepareVariantStyle } from "../../utils/project-card";
@@ -24,10 +29,8 @@ import CoverItem from "./components/cover-item";
 import { ProjectDescription } from "./components/project-description";
 import ProjectSchedule from "./components/project-schedule";
 import ProjectTokenInformation from "./components/project-token-information";
-import "./styles.scss";
-import moment from "moment";
 import StakeModal from "./components/stake-modal";
-import { STATUS_BANNER_VARIANT } from "../../constants/project-card";
+import "./styles.scss";
 
 export interface IProjectDetailPageProps {}
 
@@ -40,8 +43,8 @@ interface IProjectDetail {
     description: string;
     logoUrl: string;
     projectBanner: string;
-    totalRaise: number;
-    maxAllocation: number;
+    totalRaise: BigNumber;
+    maxAllocation: BigNumber;
     tokenSymbol: string;
     tokenSwapRaito: string;
     createdAt: Date;
@@ -49,7 +52,7 @@ interface IProjectDetail {
     endsAt: Date;
     idoStartsAt: Date;
     idoEndsAt: Date;
-    currentRaise: number;
+    currentRaise: BigNumber;
     totalParticipants: number;
     status: string;
 }
@@ -59,11 +62,15 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
     const { contract } = useSmartContract();
     const { token: themeToken } = theme.useToken();
     const { address } = useSmartContract();
+    const { blockUI, unblockUI } = useBlockUI();
+    const antMessage = useAntMessage();
+
+    const [modal, contextHolder] = Modal.useModal();
 
     const [project, setProject] = useState<IProjectDetail | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [stakModal, setStakeModal] = useState({ show: false });
+    const [stakeModal, setStakeModal] = useState({ show: false });
 
     const fetchProject = async () => {
         try {
@@ -79,8 +86,8 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                 description: result.description,
                 logoUrl: result.logoUrl,
                 projectBanner: result.coverBackgroundUrl,
-                totalRaise: result.allocation.totalRaise.toNumber(),
-                maxAllocation: result.allocation.maxAllocation.toNumber(),
+                totalRaise: result.allocation.totalRaise,
+                maxAllocation: result.allocation.maxAllocation,
                 tokenSymbol: result.tokenInformation.symbol,
                 tokenSwapRaito: result.tokenInformation.swapRaito,
                 createdAt: new Date(result.schedule.createdAt.toNumber()),
@@ -89,14 +96,59 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                 idoStartsAt: new Date(result.schedule.idoStartsAt.toNumber()),
                 idoEndsAt: new Date(result.schedule.idoEndsAt.toNumber()),
                 totalParticipants: result.totalParticipants.toNumber(),
-                currentRaise: result.currentRaise.toNumber(),
-                status: raisingStatus(result.currentRaise.toNumber(), result.allocation.totalRaise.toNumber()),
+                currentRaise: result.currentRaise,
+                status: raisingStatus(result.currentRaise, result.allocation.totalRaise),
             };
 
             setProject(mappedResult);
+
+            // if (address) {
+            //     getStakedMoney();
+            // }
         } catch (error: any) {
             setIsLoading(false);
-            console.log(error.reason);
+            modal.error({
+                title: "Project not found",
+                centered: true,
+                footer: [
+                    <Space key={"explore-btn"} style={{ width: "100%", justifyContent: "center" }}>
+                        <Link to="/explore">
+                            <Button type="primary">Explore more project</Button>
+                        </Link>
+                    </Space>,
+                ],
+            });
+        }
+    };
+
+    // const getStakedMoney = async () => {
+    //     try {
+    //         const result = await contract.call("getProjectStakingByInvestor", [project?.id]);
+    //         console.log(result);
+    //     } catch (error: any) {
+    //         if (error.reason === "staking_not_found") {
+
+    //         }
+    //     }
+    // };
+
+    const handleConfirmStake = async (value: number) => {
+        try {
+            blockUI("Transaction is in progress, please wait ...");
+            await contract!.call("stakingInProject", [project?.id || 0], {
+                value: utils.parseEther(value.toString()),
+            });
+            unblockUI();
+
+            setStakeModal({ ...stakeModal, show: false });
+            antMessage.success("Transaction completed", 2);
+
+            // update card UI
+            fetchProject();
+        } catch (error: any) {
+            unblockUI();
+            const reason = error.reason;
+            antMessage.error(getStakeErrorMessage(reason), 2);
         }
     };
 
@@ -106,7 +158,7 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
         }
 
         fetchProject();
-    }, [projectSlug, contract]);
+    }, [projectSlug, contract, address]);
 
     const projectLoaded = !isLoading && project;
 
@@ -154,11 +206,7 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                 <Row gutter={[{ lg: 16 }, 16]} className="project-detail-content">
                     <Col xs={24} lg={16}>
                         {!projectLoaded && <Skeleton.Input active block size="large" />}
-                        {projectLoaded && (
-                            <Carousel dotPosition="bottom" effect="scrollx">
-                                <CoverItem src={project.projectBanner} />
-                            </Carousel>
-                        )}
+                        {projectLoaded && <CoverItem src={project.projectBanner} />}
                     </Col>
                     <Col xs={24} lg={8}>
                         <Card bordered>
@@ -188,7 +236,10 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                                     Target
                                                                 </Typography.Text>
                                                                 <Typography.Text className="project-detail-content-allocation">
-                                                                    {formatNumberStrWithCommas(project.totalRaise)} ETH
+                                                                    {formatNumberStrWithCommas(
+                                                                        project.totalRaise.toString()
+                                                                    )}{" "}
+                                                                    ETH
                                                                 </Typography.Text>
                                                             </>
                                                         )}
@@ -198,7 +249,9 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                                     Total Raised
                                                                 </Typography.Text>
                                                                 <Typography.Text className="project-detail-content-allocation">
-                                                                    {formatNumberStrWithCommas(project.currentRaise)}{" "}
+                                                                    {formatNumberStrWithCommas(
+                                                                        utils.formatEther(project.currentRaise)
+                                                                    )}{" "}
                                                                     ETH
                                                                 </Typography.Text>
                                                             </>
@@ -206,10 +259,13 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                         {project.status === "complete" && (
                                                             <>
                                                                 <Typography.Text className="project-detail-content-allocation">
-                                                                    {formatNumberStrWithCommas(project.totalRaise)} ETH
+                                                                    {formatNumberStrWithCommas(
+                                                                        project.totalRaise.toString()
+                                                                    )}{" "}
+                                                                    ETH
                                                                 </Typography.Text>
                                                                 <Typography.Text className="project-detail-content-meta">
-                                                                    Maximum funding goal reached
+                                                                    Target reached
                                                                 </Typography.Text>
                                                             </>
                                                         )}
@@ -226,23 +282,52 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                         </div>
                                                     </Tooltip>
                                                 </Space>
-                                                <Progress
-                                                    showInfo={false}
-                                                    percent={project.currentRaise / project.totalRaise}
-                                                    strokeColor={{ "0%": "#108ee9", "100%": "#87d068" }}
+
+                                                <TooltipProgress
+                                                    value={
+                                                        parseFloat(
+                                                            utils
+                                                                .formatEther(
+                                                                    project.currentRaise.div(project.totalRaise)
+                                                                )
+                                                                .toString()
+                                                        ) * 100
+                                                    }
                                                 />
+
                                                 <Space direction="vertical" className="project-detail-content-info">
+                                                    {project.status === "funding" && (
+                                                        <Space
+                                                            direction="horizontal"
+                                                            align="baseline"
+                                                            className="project-detail-content-info-title"
+                                                        >
+                                                            <Typography.Text>Target</Typography.Text>
+                                                            <hr />
+                                                            <Typography.Text>
+                                                                {formatNumberStrWithCommas(
+                                                                    project.totalRaise.toString()
+                                                                )}{" "}
+                                                                ETH
+                                                            </Typography.Text>
+                                                        </Space>
+                                                    )}
+
                                                     <Space
                                                         direction="horizontal"
                                                         align="baseline"
                                                         className="project-detail-content-info-title"
                                                     >
-                                                        <Typography.Text>Allocation</Typography.Text>
+                                                        <Typography.Text>Max Allocation</Typography.Text>
                                                         <hr />
                                                         <Typography.Text>
-                                                            {formatNumberStrWithCommas(project.maxAllocation)} ETH
+                                                            {formatNumberStrWithCommas(
+                                                                project.maxAllocation.toString()
+                                                            )}{" "}
+                                                            ETH
                                                         </Typography.Text>
                                                     </Space>
+
                                                     <Space
                                                         direction="horizontal"
                                                         align="baseline"
@@ -252,6 +337,7 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                         <hr />
                                                         <Typography.Text>{project.totalParticipants}</Typography.Text>
                                                     </Space>
+
                                                     <Space
                                                         direction="horizontal"
                                                         align="baseline"
@@ -265,19 +351,22 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                     </Space>
                                                 </Space>
 
-                                                {address && bannerVariant === STATUS_BANNER_VARIANT.FUNDING && (
-                                                    <Button
-                                                        type="primary"
-                                                        block
-                                                        size="large"
-                                                        style={{
-                                                            fontWeight: "600",
-                                                        }}
-                                                        onClick={() => setStakeModal({ show: true })}
-                                                    >
-                                                        Stake Money
-                                                    </Button>
-                                                )}
+                                                {address &&
+                                                    project.status !== "complete" &&
+                                                    address !== project.owner &&
+                                                    bannerVariant === STATUS_BANNER_VARIANT.FUNDING && (
+                                                        <Button
+                                                            type="primary"
+                                                            block
+                                                            size="large"
+                                                            style={{
+                                                                fontWeight: "600",
+                                                            }}
+                                                            onClick={() => setStakeModal({ show: true })}
+                                                        >
+                                                            Stake Money
+                                                        </Button>
+                                                    )}
                                             </Space>
                                         }
                                         style={{
@@ -350,23 +439,54 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
             </Space>
 
             <StakeModal
-                show={stakModal.show}
+                show={stakeModal.show}
                 title={"Stake in project"}
-                onConfirm={() => {}}
-                onCancel={() => setStakeModal({ ...stakModal, show: false })}
+                maxAllocation={project?.maxAllocation}
+                currentRaise={project?.currentRaise}
+                onConfirm={handleConfirmStake}
+                onCancel={() => setStakeModal({ ...stakeModal, show: false })}
             />
+            {contextHolder}
         </>
     );
 }
 
-function raisingStatus(currentRaise: number, totalRaise: number): string {
-    if (currentRaise >= totalRaise) {
+function raisingStatus(currentRaiseInWei: BigNumber, totalRaise: BigNumber): string {
+    const totalRaiseInWei = utils.parseEther(totalRaise.toString());
+    if (currentRaiseInWei.gte(totalRaiseInWei)) {
         return "complete";
     }
 
-    if (currentRaise > 0) {
+    if (currentRaiseInWei.gt(0)) {
         return "funding";
     }
 
     return "open";
 }
+
+function getStakeErrorMessage(reason: string): string {
+    switch (reason) {
+        case "project_owner":
+            return "Onwer cannot stake";
+        case "staking_not_open":
+            return "Funding period is not opened";
+        case "target_reached":
+            return "Target has reached";
+        case "not_enough":
+            return "Please stake more money";
+        case "max_allocation":
+            return "You have reached max allocation";
+        case "too_much":
+            return "You have staked too much";
+        default:
+            return "Transaction failed, please try again later!";
+    }
+}
+
+const TooltipProgress = ({ value }: { value: number }) => {
+    return (
+        <Tooltip title={value + "%"}>
+            <Progress showInfo={false} percent={value} strokeColor={{ "0%": "#108ee9", "100%": "#87d068" }} />
+        </Tooltip>
+    );
+};

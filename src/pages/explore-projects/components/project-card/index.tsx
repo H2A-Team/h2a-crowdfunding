@@ -87,7 +87,7 @@ export default function ProjectCard(props: IProjectCardProps) {
 
                 <div style={{ display: "flex", gap: "4px" }}>
                     <Typography.Text type="secondary" ellipsis>
-                        Goal
+                        Target
                     </Typography.Text>
                     <div
                         style={{

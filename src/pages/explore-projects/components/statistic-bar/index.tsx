@@ -1,4 +1,5 @@
 import { Col, Row, Space, Typography } from "antd";
+import { BigNumber, utils } from "ethers";
 import { formatNumberStrWithCommas } from "../../../../utils/common-utils";
 import StatisticCard from "../statistic-card";
 import FundedProjectsIcon from "../statistic-card-icon/funded-projects";
@@ -7,9 +8,9 @@ import RaisedCapital from "../statistic-card-icon/raised-capital";
 import UniqueParticipants from "../statistic-card-icon/unique-participants";
 
 export interface IStatisticData {
-    totalProjects: number;
-    uniqueParticipants: number;
-    totalRaised: number;
+    totalProjects: BigNumber;
+    uniqueParticipants: BigNumber;
+    totalRaised: BigNumber;
 }
 
 export interface IStatisticBarProps {
@@ -41,7 +42,7 @@ export default function StatisticBar(props: IStatisticBarProps) {
                     <Col xxl={8} xl={8} lg={8} md={8} xs={24}>
                         <StatisticCard
                             label="Funded Projects"
-                            value={data.totalProjects || 0}
+                            value={data.totalProjects.toString()}
                             iconComponent={
                                 <IconWrapper
                                     color="rgb(245, 158, 11)"
@@ -58,7 +59,7 @@ export default function StatisticBar(props: IStatisticBarProps) {
                     <Col xxl={8} xl={8} lg={8} md={8} xs={24}>
                         <StatisticCard
                             label="Unique Participants"
-                            value={data.uniqueParticipants || 0}
+                            value={data.uniqueParticipants.toString()}
                             iconComponent={
                                 <IconWrapper
                                     color="rgb(33, 188, 201)"
@@ -75,7 +76,7 @@ export default function StatisticBar(props: IStatisticBarProps) {
                     <Col xxl={8} xl={8} lg={8} md={8} xs={24}>
                         <StatisticCard
                             label="Raised Capital"
-                            value={data.totalRaised || 0}
+                            value={utils.formatEther(data.totalRaised)}
                             iconComponent={
                                 <IconWrapper
                                     color="rgb(71, 98, 225)"

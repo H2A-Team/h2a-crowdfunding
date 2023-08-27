@@ -2,12 +2,15 @@ import { useWallet } from "@thirdweb-dev/react";
 import { Alert, Button, Col, InputNumber, Modal, Row, Space, Typography, theme } from "antd";
 import { BigNumber } from "ethers";
 import { useEffect, useState } from "react";
+import { useSmartContract } from "../../../../contexts/smart-contract";
 import "./styles.scss";
 
 export interface IStakeModalProps {
     show: boolean;
     title: string;
-    onConfirm: () => void | undefined;
+    maxAllocation?: BigNumber;
+    currentRaise?: BigNumber;
+    onConfirm: (value: number) => Promise<void> | void | undefined;
     onCancel: () => void | undefined;
 }
 
@@ -16,6 +19,9 @@ export default function StakeModal(props: IStakeModalProps) {
 
     const { token } = theme.useToken();
     const wallet = useWallet();
+    const { address } = useSmartContract();
+
+    const [amount, setAmount] = useState(0);
 
     const [userWallet, setUserWallet] = useState<{ balance: BigNumber; currencySymbol: string; display: string }>({
         balance: BigNumber.from(0),
@@ -23,27 +29,38 @@ export default function StakeModal(props: IStakeModalProps) {
         display: "0",
     });
 
+    // const getMaxStakeAmount = () => {};
+
+    const loadBalance = async () => {
+        try {
+            const walletBalance = await wallet!.getBalance();
+            setUserWallet({
+                ...userWallet,
+                balance: walletBalance.value,
+                currencySymbol: walletBalance.symbol,
+                display: walletBalance.displayValue,
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const handleConfirm = () => {
+        onConfirm && onConfirm(amount);
+    };
+
     useEffect(() => {
+        if (!show) {
+            return;
+        }
+
+        setAmount(0);
         if (!wallet) {
             return;
         }
 
-        const loadBalance = async () => {
-            try {
-                const walletBalance = await wallet.getBalance();
-                setUserWallet({
-                    ...userWallet,
-                    balance: walletBalance.value,
-                    currencySymbol: walletBalance.symbol,
-                    display: walletBalance.displayValue,
-                });
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
         loadBalance();
-    }, [wallet]);
+    }, [wallet, address, show]);
 
     return (
         <Modal
@@ -54,7 +71,7 @@ export default function StakeModal(props: IStakeModalProps) {
             }
             centered
             open={show}
-            onOk={onConfirm}
+            onOk={handleConfirm}
             onCancel={onCancel}
             okText="Submit"
             footer={[
@@ -63,7 +80,7 @@ export default function StakeModal(props: IStakeModalProps) {
                         Cancel
                     </Button>
 
-                    <Button size="large" type="primary" onClick={onConfirm}>
+                    <Button size="large" type="primary" onClick={handleConfirm}>
                         Submit
                     </Button>
                 </Space>,
@@ -91,15 +108,18 @@ export default function StakeModal(props: IStakeModalProps) {
                             min={0}
                             bordered={false}
                             placeholder="0.0001"
+                            value={amount}
+                            onChange={(value) => value !== null && setAmount(value)}
                         />
 
-                        <Button
+                        {/* <Button
                             type="text"
                             className="stake-input-btn"
                             style={{ color: token.colorPrimary, backgroundColor: token.colorPrimaryBg }}
+                            // onClick={getMaxStakeAmount}
                         >
                             MAX
-                        </Button>
+                        </Button> */}
                     </div>
                 </Space>
 
