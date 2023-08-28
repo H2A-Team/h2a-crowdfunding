@@ -279,13 +279,9 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                 </Space>
 
                                                 <TooltipProgress
-                                                    value={
-                                                        parseFloat(
-                                                            utils.formatEther(
-                                                                project.currentRaise.div(project.totalRaise)
-                                                            )
-                                                        ) * 100
-                                                    }
+                                                    value={parseFloat(
+                                                        project.currentRaise.mul(100).div(project.totalRaise).toString()
+                                                    )}
                                                 />
 
                                                 <Space direction="vertical" className="project-detail-content-info">
