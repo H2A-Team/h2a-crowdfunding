@@ -5,8 +5,8 @@ export interface IProjectScheduleProps {
     data: {
         startDate: string;
         endDate: string;
-        idoStartDate: string;
-        idoEndDate: string;
+        // idoStartDate: string;
+        // idoEndDate: string;
     };
 }
 
@@ -31,19 +31,19 @@ export default function ProjectSchedule(props: IProjectScheduleProps) {
                 </Space>
             </Card>
 
-            <Card className="project-schedule-item">
+            {/* <Card className="project-schedule-item">
                 <Space direction="horizontal" align="center" style={{ width: "100%", justifyContent: "space-between" }}>
                     <Typography.Text className="project-schedule-item-title">Claiming Token At</Typography.Text>
                     <Typography.Text className="project-schedule-item-value">{data.idoStartDate}</Typography.Text>
                 </Space>
-            </Card>
+            </Card> */}
 
-            <Card className="project-schedule-item">
+            {/* <Card className="project-schedule-item">
                 <Space direction="horizontal" align="center" style={{ width: "100%", justifyContent: "space-between" }}>
                     <Typography.Text className="project-schedule-item-title">Claiming Token End</Typography.Text>
                     <Typography.Text className="project-schedule-item-value">{data.idoEndDate}</Typography.Text>
                 </Space>
-            </Card>
+            </Card> */}
         </Space>
     );
 }

@@ -13,6 +13,6 @@ export interface CreateProjectDTO {
     tokenSwapRaito: string;
     opensAt: number;
     endsAt: number;
-    idoStartsAt: number;
-    idoEndsAt: number;
+    // idoStartsAt: number;
+    // idoEndsAt: number;
 }
