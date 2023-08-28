@@ -1,13 +1,13 @@
 import { Card, Space, Tooltip, Typography, theme } from "antd";
+import { BigNumber, utils } from "ethers";
 import moment from "moment";
 import { Link, useNavigate } from "react-router-dom";
 import EthSvg from "../../../../components/svg-components/eth-svg";
+import { STATUS_BANNER_VARIANT } from "../../../../constants/project-card";
 import { formatNumberStrWithCommas } from "../../../../utils/common-utils";
+import { inferStatusBannerVariantV2, prepareVariantStyle } from "../../../../utils/project-card";
 import ProjectCardBanner, { IProjectCardBannerProps } from "./components/project-card-banner";
 import "./index.scss";
-import { inferStatusBannerVariant, prepareVariantStyle } from "../../../../utils/project-card";
-import { STATUS_BANNER_VARIANT } from "../../../../constants/project-card";
-import { BigNumber, utils } from "ethers";
 
 export interface IProjectCardData {
     id: number;
@@ -22,8 +22,6 @@ export interface IProjectCardData {
     createdDate: Date;
     startDate: Date;
     endDate: Date;
-    idoOpenDate: Date;
-    idoCloseDate: Date;
 }
 
 interface IProjectCardProps {
@@ -46,8 +44,6 @@ export default function ProjectCard(props: IProjectCardProps) {
         maxAllocation,
         endDate,
         startDate,
-        idoOpenDate,
-        idoCloseDate,
     } = data;
 
     const navigate = useNavigate();
@@ -110,7 +106,9 @@ export default function ProjectCard(props: IProjectCardProps) {
                             transform: "translateY(-6px)",
                         }}
                     ></div>
-                    <Typography.Text strong>{formatNumberStrWithCommas(utils.formatEther(maxAllocation))} ETH</Typography.Text>
+                    <Typography.Text strong>
+                        {formatNumberStrWithCommas(utils.formatEther(maxAllocation))} ETH
+                    </Typography.Text>
                 </div>
             </Space>
         );
@@ -132,24 +130,24 @@ export default function ProjectCard(props: IProjectCardProps) {
                 };
             }
 
-            case STATUS_BANNER_VARIANT.TOKEN_CLAIMING: {
-                return {
-                    label: "Claim before",
-                    value: moment(idoCloseDate).format("MMM Do YYYY"),
-                };
-            }
+            // case STATUS_BANNER_VARIANT.TOKEN_CLAIMING: {
+            //     return {
+            //         label: "Claim before",
+            //         value: moment(idoCloseDate).format("MMM Do YYYY"),
+            //     };
+            // }
 
-            case STATUS_BANNER_VARIANT.CLOSED: {
-                return {
-                    label: "Ended on",
-                    value: moment(idoCloseDate).format("MMM Do YYYY"),
-                };
-            }
+            // case STATUS_BANNER_VARIANT.CLOSED: {
+            //     return {
+            //         label: "Ended on",
+            //         value: moment(idoCloseDate).format("MMM Do YYYY"),
+            //     };
+            // }
 
             case STATUS_BANNER_VARIANT.FUNDING_CLOSED: {
                 return {
-                    label: "Claim token on",
-                    value: moment(idoOpenDate).format("MMM Do YYYY"),
+                    label: "Ended on",
+                    value: moment(endDate).format("MMM Do YYYY"),
                 };
             }
 
@@ -159,7 +157,7 @@ export default function ProjectCard(props: IProjectCardProps) {
         }
     };
 
-    const bannerVariant = inferStatusBannerVariant({ startDate, endDate, idoOpenDate, idoCloseDate });
+    const bannerVariant = inferStatusBannerVariantV2({ startDate, endDate });
     const bannerStyle = prepareVariantStyle(bannerVariant, token);
     const dateBanner = prepareDateBanner(bannerVariant);
 

@@ -23,10 +23,10 @@ export interface IProjectFormData {
         startsAt: Date;
         endsAt: Date;
     };
-    tokenClaimingPeriod: {
-        startsAt: Date;
-        endsAt: Date;
-    };
+    // tokenClaimingPeriod: {
+    //     startsAt: Date;
+    //     endsAt: Date;
+    // };
 }
 
 export interface ICreateProjectFormProps {
@@ -55,10 +55,10 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
                 startsAt: value.fundingPeriod[0].toDate(),
                 endsAt: value.fundingPeriod[1].toDate(),
             },
-            tokenClaimingPeriod: {
-                startsAt: value.tokenClaimingPeriod[0].toDate(),
-                endsAt: value.tokenClaimingPeriod[1].toDate(),
-            },
+            // tokenClaimingPeriod: {
+            //     startsAt: value.tokenClaimingPeriod[0].toDate(),
+            //     endsAt: value.tokenClaimingPeriod[1].toDate(),
+            // },
         };
 
         onSubmit && onSubmit(sanitizedValue);
@@ -196,7 +196,7 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
                 </Row>
 
                 <Row gutter={{ lg: 16 }}>
-                    <Col xs={24} lg={12}>
+                    <Col xs={24} md={12}>
                         <Form.Item
                             name="maxAllocation"
                             label="Max Allocation"
@@ -224,7 +224,7 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
                         </Form.Item>
                     </Col>
 
-                    <Col xs={24} lg={12}>
+                    <Col xs={24} md={12}>
                         <Form.Item
                             name="totalRaise"
                             label="Target"
@@ -254,66 +254,70 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
 
                 <Row gutter={{ lg: 16 }}>
                     <Col xs={24} lg={12}>
-                        <Form.Item
-                            name="tokenSymbol"
-                            label="Token Symbol"
-                            rules={[
-                                { required: true, type: "string" },
-                                {
-                                    pattern: new RegExp(/[A-Z]/),
-                                    message: "Token symbol must include only uppercase letters",
-                                },
-                            ]}
-                        >
-                            <Input placeholder="ETH" size="large" />
-                        </Form.Item>
+                        <Row gutter={{ lg: 16 }}>
+                            <Col xs={12}>
+                                <Form.Item
+                                    name="tokenSymbol"
+                                    label="Token Symbol"
+                                    rules={[
+                                        { required: true, type: "string" },
+                                        {
+                                            pattern: new RegExp(/[A-Z]/),
+                                            message: "Token symbol must include only uppercase letters",
+                                        },
+                                    ]}
+                                >
+                                    <Input placeholder="ETH" size="large" />
+                                </Form.Item>
+                            </Col>
+
+                            <Col xs={12}>
+                                <Form.Item
+                                    name="tokenSwapRaito"
+                                    label="Token Swap Raito"
+                                    rules={[
+                                        () => ({
+                                            validator(_, value) {
+                                                if (!value || value <= 0) {
+                                                    return Promise.reject(
+                                                        new Error("Token swap raito must be larger than 0")
+                                                    );
+                                                }
+
+                                                return Promise.resolve();
+                                            },
+                                        }),
+                                    ]}
+                                    tooltip={"The proportion of your token compared to 1 ETH"}
+                                >
+                                    <InputNumber size="large" placeholder="0.05" min={0} />
+                                </Form.Item>
+                            </Col>
+                        </Row>
                     </Col>
 
-                    <Col xs={24} lg={12}>
-                        <Form.Item
-                            name="tokenSwapRaito"
-                            label="Token Swap Raito"
-                            rules={[
-                                () => ({
-                                    validator(_, value) {
-                                        if (!value || value <= 0) {
-                                            return Promise.reject(new Error("Token swap raito must be larger than 0"));
-                                        }
-
-                                        return Promise.resolve();
-                                    },
-                                }),
-                            ]}
-                            tooltip={"The proportion of your token compared to 1 ETH"}
-                        >
-                            <InputNumber size="large" placeholder="0.05" min={0} />
-                        </Form.Item>
-                    </Col>
-                </Row>
-
-                <Row gutter={{ lg: 16 }}>
                     <Col xs={24} lg={12}>
                         <Form.Item
                             name="fundingPeriod"
                             label="Funding Period"
                             rules={[
-                                ({ getFieldValue }) => {
+                                () => {
                                     return {
                                         validator(_, value) {
                                             if (!value) {
                                                 return Promise.reject(new Error("Please enter Funding Period"));
                                             }
 
-                                            const endDate = value[1];
-                                            const tokenClaimingPeriod = getFieldValue("tokenClaimingPeriod");
+                                            // const endDate = value[1];
+                                            // const tokenClaimingPeriod = getFieldValue("tokenClaimingPeriod");
 
-                                            if (tokenClaimingPeriod && tokenClaimingPeriod[0].isBefore(endDate)) {
-                                                return Promise.reject(
-                                                    new Error(
-                                                        "Funding end date must be before token claiming start date"
-                                                    )
-                                                );
-                                            }
+                                            // if (tokenClaimingPeriod && tokenClaimingPeriod[0].isBefore(endDate)) {
+                                            //     return Promise.reject(
+                                            //         new Error(
+                                            //             "Funding end date must be before token claiming start date"
+                                            //         )
+                                            //     );
+                                            // }
 
                                             return Promise.resolve();
                                         },
@@ -333,8 +337,10 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
                             />
                         </Form.Item>
                     </Col>
+                </Row>
 
-                    <Col xs={24} lg={12}>
+                <Row gutter={{ lg: 16 }}>
+                    {/* <Col xs={24} lg={12}>
                         <Form.Item
                             name="tokenClaimingPeriod"
                             label="Token Claiming Period"
@@ -376,7 +382,7 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
                                 }}
                             />
                         </Form.Item>
-                    </Col>
+                    </Col> */}
                 </Row>
 
                 <Alert
@@ -385,8 +391,8 @@ export default function CreateProjectForm(props: ICreateProjectFormProps) {
                         <>
                             <p> - After submiting, you cannot edit or delete your project on this site.</p>
                             <p>
-                                - When the funding period ends, if your project are not staked at{" "}
-                                <strong>totaly 100%</strong>, all money will be sent back to investors!
+                                - When the funding period ends, if your project are not staked at <strong>90%</strong>,
+                                all money will be sent back to investors!
                             </p>
                         </>
                     }

@@ -34,8 +34,8 @@ export default function LaunchProject() {
             tokenSwapRaito: formData.tokenSwapRaito.toString(),
             opensAt: formData.fundingPeriod.startsAt.getTime(),
             endsAt: formData.fundingPeriod.endsAt.getTime(),
-            idoStartsAt: formData.tokenClaimingPeriod.startsAt.getTime(),
-            idoEndsAt: formData.tokenClaimingPeriod.endsAt.getTime(),
+            // idoStartsAt: formData.tokenClaimingPeriod.startsAt.getTime(),
+            // idoEndsAt: formData.tokenClaimingPeriod.endsAt.getTime(),
         };
 
         try {
@@ -49,7 +49,7 @@ export default function LaunchProject() {
             navigate("/explore");
         } catch (error: any) {
             unblockUI();
-            console.log(error.message | error.reason);
+            console.log(error.reason || error.message);
             antMessage.error("Transaction failed, please try again later!");
         }
     };
