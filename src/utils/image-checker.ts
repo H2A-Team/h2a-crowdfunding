@@ -2,7 +2,7 @@ export function isImageUrlValid(url: string): Promise<boolean> {
     const img = new Image();
     img.src = url;
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
         if (img.complete) {
             resolve(true);
         }

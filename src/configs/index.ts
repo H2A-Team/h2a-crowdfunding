@@ -5,6 +5,7 @@ export const APP_CONFIGS = {
     thirdwebClientId: import.meta.env.VITE_THIRDWEB_CLIENT_ID || "",
     contractAddress: import.meta.env.VITE_CONTRACT_ADDRESS || "",
     activeChain: import.meta.env.VITE_ACTIVE_CHAIN || "localhost",
+    appUrl: import.meta.env.VITE_APP_URL || "",
 };
 
 export const APP_CHAINS: Record<string, Chain> = {

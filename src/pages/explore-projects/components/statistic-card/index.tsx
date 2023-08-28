@@ -14,9 +14,9 @@ export default function StatisticCard(props: IStatisticCardProps) {
     const { label, value, iconComponent, textColor, formatters, loading } = props;
 
     const valueToDisplay = () => {
-        if (value === "0") {
-            return "N/A";
-        }
+        // if (value === "0") {
+        //     return "N/A";
+        // }
 
         let strToReturn = value;
         if (!formatters) {

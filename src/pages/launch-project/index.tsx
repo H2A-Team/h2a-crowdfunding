@@ -7,6 +7,7 @@ import { useSmartContract } from "../../contexts/smart-contract";
 import { CreateProjectDTO } from "../../core/dto";
 import CreateProjectForm, { IProjectFormData } from "./components/create-project-form";
 import "./styles.scss";
+import { utils } from "ethers";
 
 export default function LaunchProject() {
     const navigate = useNavigate();
@@ -27,8 +28,8 @@ export default function LaunchProject() {
             description: formData.description,
             logoUrl: formData.logoUrl,
             coverBackgroundUrl: formData.coverBackgroundUrl,
-            maxAllocation: formData.maxAllocation,
-            totalRaise: formData.totalRaise,
+            maxAllocation: utils.parseEther(formData.maxAllocation.toString()),
+            totalRaise: utils.parseEther(formData.totalRaise.toString()),
             tokenSymbol: formData.tokenSymbol,
             tokenSwapRaito: formData.tokenSwapRaito.toString(),
             opensAt: formData.fundingPeriod.startsAt.getTime(),
@@ -46,9 +47,9 @@ export default function LaunchProject() {
             // const { blockHash, transactionHash } = result.receipt;
 
             navigate("/explore");
-        } catch (error) {
+        } catch (error: any) {
             unblockUI();
-            // console.log(error);
+            console.log(error.message | error.reason);
             antMessage.error("Transaction failed, please try again later!");
         }
     };

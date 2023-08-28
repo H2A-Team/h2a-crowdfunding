@@ -107,6 +107,7 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
             // }
         } catch (error: any) {
             setIsLoading(false);
+            console.log(error);
             modal.error({
                 title: "Project not found",
                 centered: true,
