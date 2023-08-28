@@ -24,7 +24,7 @@ import { useAntMessage } from "../../contexts/ant-mesage";
 import { useBlockUI } from "../../contexts/block-ui";
 import { useSmartContract } from "../../contexts/smart-contract";
 import { formatNumberStrWithCommas } from "../../utils/common-utils";
-import { inferStatusBannerVariant, prepareVariantStyle } from "../../utils/project-card";
+import { inferStatusBannerVariantV2, prepareVariantStyle } from "../../utils/project-card";
 import CoverItem from "./components/cover-item";
 import { ProjectDescription } from "./components/project-description";
 import ProjectSchedule from "./components/project-schedule";
@@ -50,8 +50,6 @@ interface IProjectDetail {
     createdAt: Date;
     opensAt: Date;
     endsAt: Date;
-    idoStartsAt: Date;
-    idoEndsAt: Date;
     currentRaise: BigNumber;
     totalParticipants: number;
     status: string;
@@ -93,8 +91,6 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                 createdAt: new Date(result.schedule.createdAt.toNumber()),
                 opensAt: new Date(result.schedule.opensAt.toNumber()),
                 endsAt: new Date(result.schedule.endsAt.toNumber()),
-                idoStartsAt: new Date(result.schedule.idoStartsAt.toNumber()),
-                idoEndsAt: new Date(result.schedule.idoEndsAt.toNumber()),
                 totalParticipants: result.totalParticipants.toNumber(),
                 currentRaise: result.currentRaise,
                 status: raisingStatus(result.currentRaise, result.allocation.totalRaise),
@@ -142,14 +138,14 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
             unblockUI();
 
             setStakeModal({ ...stakeModal, show: false });
-            antMessage.success("Transaction completed", 2);
+            antMessage.success("Transaction completed", 4);
 
             // update card UI
             fetchProject();
         } catch (error: any) {
             unblockUI();
             const reason = error.reason;
-            antMessage.error(getStakeErrorMessage(reason), 2);
+            antMessage.error(getStakeErrorMessage(reason), 4);
         }
     };
 
@@ -163,11 +159,9 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
 
     const projectLoaded = !isLoading && project;
 
-    const bannerVariant = inferStatusBannerVariant({
+    const bannerVariant = inferStatusBannerVariantV2({
         startDate: project?.opensAt || new Date(),
         endDate: project?.endsAt || new Date(),
-        idoOpenDate: project?.idoStartsAt || new Date(),
-        idoCloseDate: project?.idoEndsAt || new Date(),
     });
     const bannerStyle = prepareVariantStyle(bannerVariant, themeToken);
 
@@ -238,7 +232,7 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                                 </Typography.Text>
                                                                 <Typography.Text className="project-detail-content-allocation">
                                                                     {formatNumberStrWithCommas(
-                                                                        project.totalRaise.toString()
+                                                                        utils.formatEther(project.totalRaise)
                                                                     )}{" "}
                                                                     ETH
                                                                 </Typography.Text>
@@ -261,7 +255,7 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                             <>
                                                                 <Typography.Text className="project-detail-content-allocation">
                                                                     {formatNumberStrWithCommas(
-                                                                        project.totalRaise.toString()
+                                                                        utils.formatEther(project.currentRaise)
                                                                     )}{" "}
                                                                     ETH
                                                                 </Typography.Text>
@@ -285,15 +279,9 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                 </Space>
 
                                                 <TooltipProgress
-                                                    value={
-                                                        parseFloat(
-                                                            utils
-                                                                .formatEther(
-                                                                    project.currentRaise.div(project.totalRaise)
-                                                                )
-                                                                .toString()
-                                                        ) * 100
-                                                    }
+                                                    value={parseFloat(
+                                                        project.currentRaise.mul(100).div(project.totalRaise).toString()
+                                                    )}
                                                 />
 
                                                 <Space direction="vertical" className="project-detail-content-info">
@@ -307,7 +295,7 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                             <hr />
                                                             <Typography.Text>
                                                                 {formatNumberStrWithCommas(
-                                                                    project.totalRaise.toString()
+                                                                    utils.formatEther(project.totalRaise)
                                                                 )}{" "}
                                                                 ETH
                                                             </Typography.Text>
@@ -323,7 +311,7 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                                         <hr />
                                                         <Typography.Text>
                                                             {formatNumberStrWithCommas(
-                                                                project.maxAllocation.toString()
+                                                                utils.formatEther(project.maxAllocation)
                                                             )}{" "}
                                                             ETH
                                                         </Typography.Text>
@@ -424,10 +412,8 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                         children: (
                                             <ProjectSchedule
                                                 data={{
-                                                    startDate: moment(project.opensAt).toLocaleString(),
-                                                    endDate: moment(project.endsAt).toLocaleString(),
-                                                    idoStartDate: moment(project.idoStartsAt).toLocaleString(),
-                                                    idoEndDate: moment(project.idoEndsAt).toLocaleString(),
+                                                    startDate: moment(project.opensAt).format("MMMM Do YYYY h:mm:ss AZ"),
+                                                    endDate: moment(project.endsAt).format("MMMM Do YYYY h:mm:ss AZ"),
                                                 }}
                                             />
                                         ),

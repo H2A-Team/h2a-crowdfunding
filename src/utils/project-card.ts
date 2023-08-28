@@ -42,8 +42,10 @@ export function prepareVariantStyle(
     switch (variant) {
         case STATUS_BANNER_VARIANT.UPCOMING: {
             return {
-                backgroundColor: "#CCE2FF",
-                color: themeToken.colorInfo,
+                // backgroundColor: "#CCE2FF",
+                // color: themeToken.colorInfo,
+                backgroundColor: themeToken.colorWarningBg,
+                color: themeToken.colorWarning,
             };
         }
 
@@ -54,19 +56,19 @@ export function prepareVariantStyle(
             };
         }
 
-        case STATUS_BANNER_VARIANT.TOKEN_CLAIMING: {
-            return {
-                backgroundColor: "#FFD6B4",
-                color: themeToken.colorPrimary,
-            };
-        }
+        // case STATUS_BANNER_VARIANT.TOKEN_CLAIMING: {
+        //     return {
+        //         backgroundColor: "#FFD6B4",
+        //         color: themeToken.colorPrimary,
+        //     };
+        // }
 
-        case STATUS_BANNER_VARIANT.CLOSED: {
-            return {
-                backgroundColor: themeToken.colorTextSecondary,
-                color: themeToken.colorWhite,
-            };
-        }
+        // case STATUS_BANNER_VARIANT.CLOSED: {
+        //     return {
+        //         backgroundColor: themeToken.colorTextSecondary,
+        //         color: themeToken.colorWhite,
+        //     };
+        // }
 
         case STATUS_BANNER_VARIANT.FUNDING_CLOSED: {
             return {
@@ -82,4 +84,24 @@ export function prepareVariantStyle(
             };
         }
     }
+}
+
+export function inferStatusBannerVariantV2(schedule: { startDate: Date; endDate: Date }): STATUS_BANNER_VARIANT {
+    const currentTime = moment(new Date());
+
+    const { startDate, endDate } = schedule;
+
+    // project has ended the funding phrase
+    if (moment(endDate).diff(currentTime) < 0)
+        return STATUS_BANNER_VARIANT.FUNDING_CLOSED;
+
+    // project which has not started is considered as upcoming project
+    if (moment(startDate).diff(currentTime) > 0) return STATUS_BANNER_VARIANT.UPCOMING;
+
+    // project is funding
+    if (moment(startDate).diff(currentTime) < 0 && moment(endDate).diff(currentTime) > 0)
+        return STATUS_BANNER_VARIANT.FUNDING;
+
+    // default case
+    return STATUS_BANNER_VARIANT.UNKNOWN;
 }

@@ -89,8 +89,6 @@ export default function ExploreProjects() {
                     createdDate: new Date(item.schedule.createdAt.toNumber()),
                     startDate: new Date(item.schedule.opensAt.toNumber()),
                     endDate: new Date(item.schedule.endsAt.toNumber()),
-                    // idoOpenDate: new Date(item.schedule.idoStartsAt.toNumber()),
-                    // idoCloseDate: new Date(item.schedule.idoEndsAt.toNumber()),
                 } as IProjectCardData;
             });
 
