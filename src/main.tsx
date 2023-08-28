@@ -9,9 +9,9 @@ import ScrollTopButton from "./components/buttons/scroll-top";
 import { APP_CHAINS, APP_CONFIGS } from "./configs";
 import { routes } from "./constants/routes";
 import { customizedTheme } from "./constants/theme";
+import { AntMessageProvider } from "./contexts/ant-mesage";
 import { BlockUIProvider } from "./contexts/block-ui";
 import { SmartContractProvider } from "./contexts/smart-contract";
-import { AntMessageProvider } from "./contexts/ant-mesage";
 
 const router = createBrowserRouter(routes);
 
@@ -26,7 +26,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                             activeChain={APP_CHAINS[APP_CONFIGS.activeChain]}
                             dAppMeta={{
                                 name: APP_CONFIGS.appName,
-                                url: "https://example.com",
+                                url: APP_CONFIGS.appUrl,
                                 isDarkMode: false,
                             }}
                         >

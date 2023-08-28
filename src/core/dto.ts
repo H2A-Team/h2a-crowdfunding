@@ -1,3 +1,5 @@
+import { BigNumber } from "ethers";
+
 export interface CreateProjectDTO {
     name: string;
     slug: string;
@@ -5,8 +7,8 @@ export interface CreateProjectDTO {
     description: string;
     logoUrl: string;
     coverBackgroundUrl: string;
-    maxAllocation: number;
-    totalRaise: number;
+    maxAllocation: BigNumber;
+    totalRaise: BigNumber;
     tokenSymbol: string;
     tokenSwapRaito: string;
     opensAt: number;

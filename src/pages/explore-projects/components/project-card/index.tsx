@@ -7,6 +7,7 @@ import ProjectCardBanner, { IProjectCardBannerProps } from "./components/project
 import "./index.scss";
 import { inferStatusBannerVariant, prepareVariantStyle } from "../../../../utils/project-card";
 import { STATUS_BANNER_VARIANT } from "../../../../constants/project-card";
+import { BigNumber, utils } from "ethers";
 
 export interface IProjectCardData {
     id: number;
@@ -15,9 +16,9 @@ export interface IProjectCardData {
     shortDescription: string;
     logoUrl: string;
     projectBanner: string;
-    goal: number;
+    goal: BigNumber;
     tokenSymbol: string;
-    maxAllocation: number;
+    maxAllocation: BigNumber;
     createdDate: Date;
     startDate: Date;
     endDate: Date;
@@ -96,7 +97,7 @@ export default function ProjectCard(props: IProjectCardProps) {
                             transform: "translateY(-6px)",
                         }}
                     ></div>
-                    <Typography.Text strong>{formatNumberStrWithCommas(goal.toString())} ETH</Typography.Text>
+                    <Typography.Text strong>{formatNumberStrWithCommas(utils.formatEther(goal))} ETH</Typography.Text>
                 </div>
                 <div style={{ display: "flex", gap: "4px" }}>
                     <Typography.Text type="secondary" ellipsis>
@@ -109,7 +110,7 @@ export default function ProjectCard(props: IProjectCardProps) {
                             transform: "translateY(-6px)",
                         }}
                     ></div>
-                    <Typography.Text strong>{formatNumberStrWithCommas(maxAllocation.toString())} ETH</Typography.Text>
+                    <Typography.Text strong>{formatNumberStrWithCommas(utils.formatEther(maxAllocation))} ETH</Typography.Text>
                 </div>
             </Space>
         );

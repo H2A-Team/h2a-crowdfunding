@@ -83,14 +83,14 @@ export default function ExploreProjects() {
                     shortDescription: item.shortDescription,
                     logoUrl: item.logoUrl,
                     projectBanner: item.coverBackgroundUrl,
-                    goal: item.allocation.totalRaise.toNumber(),
-                    maxAllocation: item.allocation.maxAllocation.toNumber(),
+                    goal: item.allocation.totalRaise,
+                    maxAllocation: item.allocation.maxAllocation,
                     tokenSymbol: item.tokenInformation.symbol,
                     createdDate: new Date(item.schedule.createdAt.toNumber()),
                     startDate: new Date(item.schedule.opensAt.toNumber()),
                     endDate: new Date(item.schedule.endsAt.toNumber()),
-                    idoOpenDate: new Date(item.schedule.idoStartsAt.toNumber()),
-                    idoCloseDate: new Date(item.schedule.idoEndsAt.toNumber()),
+                    // idoOpenDate: new Date(item.schedule.idoStartsAt.toNumber()),
+                    // idoCloseDate: new Date(item.schedule.idoEndsAt.toNumber()),
                 } as IProjectCardData;
             });
 
