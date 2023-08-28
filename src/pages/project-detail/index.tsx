@@ -412,8 +412,8 @@ export default function ProjectDetailPage(_props: IProjectDetailPageProps) {
                                         children: (
                                             <ProjectSchedule
                                                 data={{
-                                                    startDate: moment(project.opensAt).toLocaleString(),
-                                                    endDate: moment(project.endsAt).toLocaleString(),
+                                                    startDate: moment(project.opensAt).format("MMMM Do YYYY h:mm:ss AZ"),
+                                                    endDate: moment(project.endsAt).format("MMMM Do YYYY h:mm:ss AZ"),
                                                 }}
                                             />
                                         ),

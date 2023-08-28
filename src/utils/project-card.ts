@@ -92,7 +92,7 @@ export function inferStatusBannerVariantV2(schedule: { startDate: Date; endDate:
     const { startDate, endDate } = schedule;
 
     // project has ended the funding phrase
-    if (moment(endDate).diff(currentTime) < 0 && moment(endDate).diff(currentTime) > 0)
+    if (moment(endDate).diff(currentTime) < 0)
         return STATUS_BANNER_VARIANT.FUNDING_CLOSED;
 
     // project which has not started is considered as upcoming project

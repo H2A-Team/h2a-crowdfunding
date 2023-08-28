@@ -6,6 +6,7 @@ export const APP_CONFIGS = {
     contractAddress: import.meta.env.VITE_CONTRACT_ADDRESS || "",
     activeChain: import.meta.env.VITE_ACTIVE_CHAIN || "localhost",
     appUrl: import.meta.env.VITE_APP_URL || "",
+    apiUrl: import.meta.env.VITE_API_URL || "",
 };
 
 export const APP_CHAINS: Record<string, Chain> = {
